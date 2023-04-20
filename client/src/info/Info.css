@@ -1,0 +1,42 @@
+.App {
+  background-color: #0054AE;
+  color: white;
+  text-align: center;
+}
+
+.App-title {
+  padding: 1vw;
+  padding-top: 5vh;
+  padding-bottom: 3vh;
+  font-size: 5vw;
+}
+
+.outer {  
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  padding-top: 10px;
+  padding-bottom: 10px;
+} 
+
+.info-inner {
+  background-color: #00285A;
+  padding: 2vw;
+  text-align: start;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.info-inner h3 {
+  font-size: calc(5px + 1.8vw) !important;
+}
+
+.info-inner h4 {
+  font-size: calc(4px + 1.5vw) !important;
+}
+
+.info-inner h6 {
+  font-size: calc(2px + 1.2vw) !important;
+}

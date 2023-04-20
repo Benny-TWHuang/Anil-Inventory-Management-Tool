@@ -1,0 +1,11 @@
+.buttom_image {  
+    align-self: stretch;
+    min-width: 180px; 
+    max-width: 22%;
+    height: auto;  
+}  
+  
+.buttom_image h1{  
+    padding-top: 5px;
+    font-size: 3vb;
+}  

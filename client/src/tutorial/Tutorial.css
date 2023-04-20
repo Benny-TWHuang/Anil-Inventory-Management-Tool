@@ -1,0 +1,61 @@
+.App {
+  background-color: #0054AE;
+  color: white;
+  text-align: center;
+  overflow: auto;
+}
+
+.tu-title1 {
+  padding-left: 1vw;
+  padding-right: 1vw;
+  padding-top: 5vh;
+  font-size: 5vw;
+}
+
+.tu-title2 {
+  padding-left: 1vw;
+  padding-right: 1vw;
+  padding-bottom: 1vh;
+  font-size: 3vw;
+}
+
+.tu-content {
+  /* display: block; */
+  align-items: center;
+  justify-content: center;
+}
+
+.outer {  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+} 
+
+/* .in-text h4 {
+  padding-bottom: 2vh !important;
+} */
+
+.in-text {
+  padding-left: 1vw;
+  padding-right: 1vw;
+  padding-top: 1vh;
+  padding-bottom: 0.5vh;
+  width: 90%;
+  text-align: start;
+}
+
+.tu_image {  
+  padding-left: 1vw;
+  padding-right: 1vw;
+  padding-bottom: 2vh;
+  width: 90%;
+  height: auto;  
+}  
+
+.tu-btn {
+  margin-top: 1.5vh;
+  min-width: 120px;
+  height: auto;  
+}

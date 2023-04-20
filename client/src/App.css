@@ -1,0 +1,11 @@
+html, body {
+  margin: 0;
+  /* height: 100%;  */
+}
+
+.content-wrapper {
+    background-color: #0054AE;
+    color: white;
+    min-height: 95vh;
+    /* font-size: 5vw; */
+}

@@ -1,0 +1,30 @@
+.App {
+  background-color: #0054AE;
+  color: white;
+  text-align: center;
+}
+
+.guide-title {
+  padding: 1vw;
+  padding-top: 5vh;
+  padding-bottom: 3vh;
+  font-size: 4vw;
+}
+
+.guide-table {
+  padding-bottom: 2vh;
+  width: 80vw;
+  overflow: visible;
+  justify-content: center;
+}
+
+.guide-content {
+  padding-left: 2vw;
+  padding-right: 2vw;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+} 

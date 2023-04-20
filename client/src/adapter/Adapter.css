@@ -1,0 +1,22 @@
+.App {
+  background-color: #0054AE;
+  color: white;
+  text-align: center;
+}
+
+.App-title {
+  padding: 1vw;
+  padding-top: 5vh;
+  padding-bottom: 3vh;
+  font-size: 5vw;
+}
+
+.App-header {
+  padding-left: 2vw;
+  padding-right: 2vw;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+} 

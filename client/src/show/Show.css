@@ -1,0 +1,70 @@
+.App {
+  text-align: center;
+}
+
+.App-title {
+  padding: 1vw;
+  padding-top: 5vh;
+  padding-bottom: 3vh;
+  font-size: 5vw;
+}
+
+.App-header {
+  padding-left: 10vw;
+  padding-right: 10vw;
+  font-size: calc(3.5px + 1vw);
+  overflow: auto;
+  max-height: 70vb;
+  justify-content: center;
+} 
+
+th {
+  position: sticky;
+  top: 0;
+}
+
+.modal-dialog{
+  overflow-y: auto;    
+  overflow-x: auto;
+  max-width: 80vw !important;
+}
+
+.inner-table {
+  padding-left: 5vb;
+  padding-right: 5vb;
+  font-size: calc(2px + 2vb);
+  overflow: auto;
+  max-height: 80vb;
+  justify-content: center;
+}
+
+.add-wrapper {
+  flex-direction: column;
+  display: flex;
+  align-items: flex-start;
+}
+
+.add-wrapper form {
+  flex-direction: column;
+  display: flex;
+  font-size: max(1.2vw, 10px);
+}
+
+.add-wrapper label{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-width: 150px;
+  width: 30vw;
+}
+
+.add-wrapper select{
+  margin-left: 2.5vw;
+  min-width: 150px;
+  width: 25vw;
+}
+
+.add-wrapper input{
+  margin-left: 2.5vw;
+  min-width: 150px;
+  width: 25vw;
+}

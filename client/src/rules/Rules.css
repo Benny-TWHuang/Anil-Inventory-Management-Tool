@@ -1,0 +1,48 @@
+.App {
+  background-color: #0054AE;
+  color: white;
+  text-align: center;
+}
+
+.rules-title {
+  padding: 1vw;
+  padding-top: 5vh;
+  padding-bottom: 3vh;
+  font-size: 4vw;
+}
+
+.outer {  
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+} 
+
+.inner {
+  background-color: #00285A;
+  padding-left: 2vw;
+  padding-right: 2vw;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+  text-align: start;
+  font-size: calc(2px + 1.4vw);
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  max-width: 300px;
+}
+
+.rules_image {  
+  padding-left: 1vw;
+  padding-right: 1vw;
+  min-width: 320px; 
+  max-width: 45%;
+  height: auto;  
+}  
+
+.rule-btn {
+  margin-top: 1.5vh;
+  min-width: 120px;
+  height: auto;  
+}

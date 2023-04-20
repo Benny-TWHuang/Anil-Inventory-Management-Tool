@@ -1,0 +1,47 @@
+.login-wrapper {
+  background-color: #0054AE;
+  color: white;
+  min-height: 100vh;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+}
+
+.text {
+  /* display: inline;
+  padding-right: 5px; */
+  margin: 0;
+  min-width: 150px;
+  width: 25vw;
+  padding-left: 2.5vw;
+}
+
+.login-wrapper form {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  font-size: max(1.7vw, 11px);
+}
+
+.login-wrapper label{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-width: 150px;
+  width: 30vw;
+}
+
+.login-wrapper select{
+  margin-left: 2.5vw;
+  min-width: 150px;
+  width: 25vw;
+}
+
+.login-wrapper input{
+  margin-left: 2.5vw;
+  min-width: 150px;
+  width: 25vw;
+}
+
+.submit-but{
+  padding-top: 5px;
+}
