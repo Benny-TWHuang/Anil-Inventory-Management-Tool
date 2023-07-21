@@ -1,9 +1,16 @@
 import './Guide.css';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import ButtonImage from "../button_img/ButtonImage.js";
 
 export default function Guide() {
   return (
     <div className="App">
+      <div className="bread">
+        <Breadcrumb>
+          <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+          <Breadcrumb.Item active>User Guide</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
       <header className="guide-title">ANIL Inventory Management Tool User Guide</header>
       <div className="guide-content">
         <div className = "guide-table">

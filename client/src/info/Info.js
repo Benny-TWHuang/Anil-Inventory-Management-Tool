@@ -1,8 +1,15 @@
 import './Info.css';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 
 export default function Info() {
   return (
     <div className="App">
+    <div className="bread">
+      <Breadcrumb>
+        <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+        <Breadcrumb.Item active>Information</Breadcrumb.Item>
+      </Breadcrumb>
+    </div>
       <header className="App-title">Information</header>
       <div className="outer">
         <div className="info-inner rounded">

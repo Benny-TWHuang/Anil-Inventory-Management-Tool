@@ -1,9 +1,16 @@
 import './Adapter.css';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import ButtonImage from "../button_img/ButtonImage.js";
 
 export default function Adapter() {
   return (
     <div className="App">
+      <div className="bread">
+        <Breadcrumb>
+          <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+          <Breadcrumb.Item active>Ethernet Network Adapter</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
       <header className="App-title">Ethernet Network Adapter</header>
       <div className="App-header">
         <ButtonImage img_path="./menu_img/nic.png" site="/adapter/800" name="800 Series" />

@@ -1,5 +1,6 @@
 import './Account.css';
 import jwt from 'jwt-decode';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 
 export default function Account() {
   let a;
@@ -22,6 +23,12 @@ export default function Account() {
 
   return (
     <div className="App">
+      <div className="bread">
+        <Breadcrumb>
+          <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+          <Breadcrumb.Item active>My Account</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
       <header className="App-title">My Account</header>
       <div className="outer">
         <div className="acc-inner rounded">

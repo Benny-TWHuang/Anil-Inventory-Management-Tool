@@ -1,4 +1,5 @@
 import './Tutorial.css';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import { useNavigate } from "react-router-dom";
 import { Button } from 'react-bootstrap';
 
@@ -16,6 +17,13 @@ export default function Tutorial(props) {
   let navigate = useNavigate(); 
   return (
     <div className="App">
+      <div className="bread">
+        <Breadcrumb>
+          <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+          <Breadcrumb.Item href="/guide ">User Guide</Breadcrumb.Item>
+          <Breadcrumb.Item active>How to update information/notes</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
       <header className="tu-title1"> ANIL Inventory Management Tool </header>
       <header className="tu-title2"> How to update information/notes </header>
       <div className="tu-content">

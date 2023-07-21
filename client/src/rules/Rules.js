@@ -1,4 +1,5 @@
 import './Rules.css';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import { useNavigate } from "react-router-dom";
 import { Button } from 'react-bootstrap';
 
@@ -6,6 +7,7 @@ export default function Rules(props) {
   let graphImage = require(`${props.img_path}`);
 
   let rule_text = <></>;
+  let bc = "";
   if(props.cate === "Borrow") {
     rule_text = <>
                   <h3>Borrow Cases</h3>
@@ -18,16 +20,25 @@ export default function Rules(props) {
                   <h6>Case4 - AIMT owner is not in seat</h6>
                   <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{">>"}  IM AIMT owner first, or inform AIMT owner by mail</h6>
                 </>
+    bc = "Borrow Rules";
   } else {
     rule_text = <>
                   <h3>Return Rule</h3>
                   <h6>AIMT owner check with borrower if NIC is functional or not</h6>
                   <h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{">>"} If broken, please update in AIMT</h6>
                 </>
+    bc = "Return Rules";
   }
   let navigate = useNavigate(); 
   return (
     <div className="App">
+      <div className="bread">
+        <Breadcrumb>
+          <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+          <Breadcrumb.Item href="/guide ">User Guide</Breadcrumb.Item>
+          <Breadcrumb.Item active>{bc}</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
       <header className="rules-title">ANIL Inventory Management Tool {props.cate} Rules</header>
       <div className="outer">
         <img src={graphImage} className="rules_image" alt={props.cate} />

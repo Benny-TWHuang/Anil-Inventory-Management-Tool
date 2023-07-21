@@ -4,16 +4,12 @@ const app = express();
 const port = 5000;
 const jwt = require('jsonwebtoken');
 const ldap = require('ldapjs');
-const ldapClient = ldap.createClient({
-    url: 'ldaps://corpad.intel.com:3269',
-    tlsOptions: { 'rejectUnauthorized': false }
-});
 
 const nodemailer = require('nodemailer');
-const mymail = 'your mail';
-const mypw = 'your password';
-const labidsid = 'lab account';
-const labpw = 'lab account password';
+const mymail = 'Mail of administrator';
+const mypw = 'Mail password';
+const labidsid = 'idsid lab';
+const labpw = 'idsid password of lab';
 const transporter = nodemailer.createTransport({
     host: 'smtpauth.intel.com',
     secureConnecton: true,
@@ -24,27 +20,39 @@ const transporter = nodemailer.createTransport({
         pass: mypw
     }
 });
+var cc_list = [
+    'terax.chen@intel.com',
+    'yu-chenx.hung@intel.com',
+    'chien-cheng.li@intel.com',
+  ];
 
 var pgp = require("pg-promise")(/*options*/);
-let dbm = pgp("postgres://account:username@localhost:5432/MODULE");
-let dbn = pgp("postgres://account:username@localhost:5432/NIC");
-let dbo = pgp("postgres://account:username@localhost:5432/OTHERS");
-let dbmem = pgp("postgres://account:username@localhost:5432/MEMBERS");
+let dbm = pgp("postgres://test:Lad12345@localhost:5432/MODULE");
+let dbn = pgp("postgres://test:Lad12345@localhost:5432/NIC");
+let dbo = pgp("postgres://test:Lad12345@localhost:5432/OTHERS");
+let dbmem = pgp("postgres://test:Lad12345@localhost:5432/MEMBERS");
 
 app.use(cors());
 
-async function find_wwid(wwid) {
+async function find_wwid(ori_wwid) {
     let ori;
+    let wwid = ori_wwid.replace(/\s+/g, "");
     const searchPromise = await new Promise((resolve, reject) => {
         dbmem.any("SELECT * FROM public.table_1 WHERE \"WWID\" = $1", [wwid])
         .then(function (result) {
             if(result.length == 0) {
+                const ldapClient = ldap.createClient({
+                    url: 'ldaps://corpad.intel.com:3269',
+                    reconnect: true,
+                    tlsOptions: { 'rejectUnauthorized': false }
+                });
                 ldapClient.on('error', err => { console.log('ldap error', err);});
-            
-                ldapClient.bind(`GAR\\${labidsid})`, labpw, (bindErr, bindRes) => {
+                ldapClient.bind(`GAR\\${labidsid}`, labpw, (bindErr, bindRes) => {
                     if (bindErr) {
+                        ldapClient.destroy();
                         return 0;
                     }
+                    console.log("wwid: ", ori_wwid)
                     
                     const opts = {
                         filter: `(employeeID=${wwid})`,
@@ -65,11 +73,13 @@ async function find_wwid(wwid) {
                         });
                         searchRes.on('error', error => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                             console.log('search error:', error);
                         });
                 
                         searchRes.on('end', result => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                         });
                     });
                     ldapClient.search(`OU=Workers,DC=AMR,DC=corp,DC=intel,DC=com`, opts, (searchErr, searchRes) => {
@@ -84,11 +94,13 @@ async function find_wwid(wwid) {
                         });
                         searchRes.on('error', error => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                             console.log('search error:', error);
                         });
                 
                         searchRes.on('end', result => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                         });
                     });
                     ldapClient.search(`OU=Workers,DC=GER,DC=corp,DC=intel,DC=com`, opts, (searchErr, searchRes) => {
@@ -103,11 +115,13 @@ async function find_wwid(wwid) {
                         });
                         searchRes.on('error', error => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                             console.log('search error:', error);
                         });
                 
                         searchRes.on('end', result => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                         });
                     });
                     ldapClient.search(`OU=Workers,DC=CCR,DC=corp,DC=intel,DC=com`, opts, (searchErr, searchRes) => {
@@ -122,11 +136,13 @@ async function find_wwid(wwid) {
                         });
                         searchRes.on('error', error => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                             console.log('search error:', error);
                         });
                 
                         searchRes.on('end', result => {
                             ldapClient.unbind();
+                            ldapClient.destroy();
                         });
                     });
                 });
@@ -290,25 +306,33 @@ app.use('/api/update', express.json(), (req, res) => {
     } 
 });
 
-app.use('/api/status', express.json(), async (req, res) => {
+app.use('/api/status', express.json(), (req, res) => {
     let asking = req.body.ask, uid = req.body.uid , status = req.body.status, borrower = req.body.borrower, note = req.body.note;
-    if (status == undefined || status == "") {
+    if (status == undefined || status == "" || status.includes('NA') || status.includes('Na') || status.includes('na')) {
         status = 'NA';
     }
-    if (borrower == undefined || borrower == "") {
+    if (borrower == undefined || borrower == "" || borrower.length < 8 || borrower.includes('NA') || borrower.includes('Na') || borrower.includes('na')) {
         borrower = 'NA';
     }
-    if (note == undefined || note == "") {
+    if (note == undefined || note == "" || note.includes('NA') || note.includes('Na') || note.includes('na')) {
         note = 'NA';
     }
-    
 
     if(asking.substring(0, 3) == "ada" || asking == "legacy"){
+        let product;
+        let group;
+        if (asking.substring(0, 3) == "ada") {
+            group = "NIC - Series "+asking.substring(3, 6);
+        } else {
+            group = "NIC - Legacy";
+        }
+        
         dbn.any("SELECT * FROM public.table1 WHERE \"UID\" = $1", [uid])
         .then(function (result) {
             if(result.length == 0) {
                 res.send("Nonexist");
             } else {
+                product = result[0].Product_Name;
                 dbn.any("INSERT INTO public.table2 VALUES($1, $2, $3)", [uid, status, borrower])
                 .catch(function (error2) {
                     console.log(error2);
@@ -321,11 +345,11 @@ app.use('/api/status', express.json(), async (req, res) => {
                 }
                 
                 dbn.any("SELECT * FROM public.table2 WHERE \"UID\" = $1 ORDER BY \"Date\"", [uid])
-                .then(function (result) {
+                .then(async function (result) {
                     let preborrower = result[result.length - 1].Borrower;
                     let bor = 0, ret = 0;
                     if(preborrower != borrower) {
-                        if(preborrower === 'NA') {
+                        if(preborrower === 'NA' || preborrower.length < 8 || preborrower.includes('NA') || preborrower.includes('Na') || preborrower.includes('na')) {
                             bor = 1;
                         } else if (borrower === 'NA') {
                             ret = 1;
@@ -337,34 +361,73 @@ app.use('/api/status', express.json(), async (req, res) => {
                         bor = 1;
                     }
                     if(bor === 1) {
-                        // let bor_res = await find_wwid(borrower);//ori.id, ori.name, user.department, ori.mail, ori.ssid
-    
-                        // let borrow_mail = {
-                        //     from: 'ANIL.Inventory.Management.Tool@intel.com',
-                        //     to: bor_res.mail,
-                        //     subject: 'Borrow Notice',
-                        //     text: 'This is a test email sent from Node.js and Express'
-                        // };
-                        // transporter.sendMail(borrow_mail, function(error, info){
-                        //     if(error){
-                        //         console.log(error);
-                        //     }
-                        // });
+                        let bor_res = await find_wwid(borrower);
+                        let today = new Date();
+                        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        let dateTime = date+' '+time;
+                        let text_a = `Hi,
+
+                        Thanks for taking ANIL Inventory Management Tool service.
+                        The following item is assigned to you.
+                        For details, please access AIMT website to check your account - http://10.89.83.57/
+                        UID: ${uid}
+                        Product Name: ${product}
+                        WWID: ${borrower}
+                        Name: ${bor_res.name}
+                        Assigned By Date: ${dateTime}
+                        
+                        Sincerely, 
+                        ANIL Inventory Management System
+                        `.replace(/^ +/gm, '');
+
+                        let borrow_mail = {
+                            from: 'ANIL.Inventory.Management.Tool@intel.com',
+                            to: bor_res.mail,
+                            cc: cc_list,
+                            subject: `<Assigned> ${group}, UID - ${uid}, Product Name - ${product}`,
+                            text: text_a
+                        };
+                        transporter.sendMail(borrow_mail, function(error, info){
+                            if(error){
+                                console.log(error);
+                            }
+                        });
                     }
                     if(ret === 1) {
-                        // let ret_res = await find_wwid(preborrower);//ori.id, ori.name, user.department, ori.mail, ori.ssid
-                        
-                        // let return_mail = {
-                        //     from: 'ANIL.Inventory.Management.Tool@intel.com',
-                        //     to: ret_res.mail,
-                        //     subject: 'Return Notice',
-                        //     text: 'This is a test email sent from Node.js and Express'
-                        // };
-                        // transporter.sendMail(return_mail, function(error, info){
-                        //     if(error){
-                        //         console.log(error);
-                        //     }
-                        // });
+                        let ret_res = await find_wwid(preborrower);
+                        let today = new Date();
+                        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        let dateTime = date+' '+time;
+
+                        let text_r = `Hi,
+
+                        We’ve received this item that you just checked in.
+                        We look forward to continuing to serve you.
+                        For details, please access AIMT website to check your account - http://10.89.83.57/
+                        UID: ${uid}
+                        Product Name: ${product}
+                        WWID: ${preborrower}
+                        Name: ${ret_res.name}
+                        Return By Date:  ${dateTime}
+
+                        Sincerely, 
+                        ANIL Inventory Management System
+                        `.replace(/^ +/gm, '');
+
+                        let return_mail = {
+                            from: 'ANIL.Inventory.Management.Tool@intel.com',
+                            to: ret_res.mail,
+                            cc: cc_list,
+                            subject: `<Return> ${group}, UID - ${uid}, Product Name - ${product}`,
+                            text: text_r
+                        };
+                        transporter.sendMail(return_mail, function(error, info){
+                            if(error){
+                                console.log(error);
+                            }
+                        });
                     }
                 })
                 res.send("OK");
@@ -374,11 +437,22 @@ app.use('/api/status', express.json(), async (req, res) => {
             console.log(error);
         });
     } else if (asking == "module" || asking == "DAC" || asking == "AOC"){
+        let product;
+        let group;
+        if (asking == "module") {
+            group = "Module & Cable - Module";
+        } else if (asking == "DAC") {
+            group = "Module & Cable - DAC ";
+        } else if (asking == "AOC") {
+            group = "Module & Cable - DAC ";
+        } 
+        
         dbm.any("SELECT * FROM public.table_1 WHERE \"UID\" = $1", [uid])
         .then(function (result) {
             if(result.length == 0) {
                 res.send("Nonexist");
             } else {
+                product = result[0].Model;
                 dbm.any("INSERT INTO public.table_2 VALUES($1, $2, $3)", [uid, status, borrower])
                 .catch(function (error2) {
                     console.log(error2);
@@ -389,6 +463,93 @@ app.use('/api/status', express.json(), async (req, res) => {
                         console.log(error3);
                     });
                 }
+                
+                dbm.any("SELECT * FROM public.table_2 WHERE \"UID\" = $1 ORDER BY \"Date\"", [uid])
+                .then(async function (result) {
+                    let preborrower = result[result.length - 1].Borrower;
+                    let bor = 0, ret = 0;
+                    if(preborrower != borrower) {
+                        if(preborrower === 'NA' || preborrower.length < 8 || preborrower.includes('NA') || preborrower.includes('Na') || preborrower.includes('na')) {
+                            bor = 1;
+                        } else if (borrower === 'NA') {
+                            ret = 1;
+                        } else {
+                            bor = 1;
+                            ret = 1;
+                        }
+                    } else if (borrower != 'NA') {
+                        bor = 1;
+                    }
+                    if(bor === 1) {
+                        let bor_res = await find_wwid(borrower);
+                        let today = new Date();
+                        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        let dateTime = date+' '+time;
+                        let text_a = `Hi,
+
+                        Thanks for taking ANIL Inventory Management Tool service.
+                        The following item is assigned to you.
+                        For details, please access AIMT website to check your account - http://10.89.83.57/
+                        UID: ${uid}
+                        Product Name: ${product}
+                        WWID: ${borrower}
+                        Name: ${bor_res.name}
+                        Assigned By Date: ${dateTime}
+                        
+                        Sincerely, 
+                        ANIL Inventory Management System
+                        `.replace(/^ +/gm, '');
+
+                        let borrow_mail = {
+                            from: 'ANIL.Inventory.Management.Tool@intel.com',
+                            to: bor_res.mail,
+                            cc: cc_list,
+                            subject: `<Assigned> ${group}, UID - ${uid}, Product Name - ${product}`,
+                            text: text_a
+                        };
+                        transporter.sendMail(borrow_mail, function(error, info){
+                            if(error){
+                                console.log(error);
+                            }
+                        });
+                    }
+                    if(ret === 1) {
+                        let ret_res = await find_wwid(preborrower);
+                        let today = new Date();
+                        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        let dateTime = date+' '+time;
+
+                        let text_r = `Hi,
+
+                        We’ve received this item that you just checked in.
+                        We look forward to continuing to serve you.
+                        For details, please access AIMT website to check your account - http://10.89.83.57/
+                        UID: ${uid}
+                        Product Name: ${product}
+                        WWID: ${preborrower}
+                        Name: ${ret_res.name}
+                        Return By Date:  ${dateTime}
+
+                        Sincerely, 
+                        ANIL Inventory Management System
+                        `.replace(/^ +/gm, '');
+
+                        let return_mail = {
+                            from: 'ANIL.Inventory.Management.Tool@intel.com',
+                            to: ret_res.mail,
+                            cc: cc_list,
+                            subject: `<Return> ${group}, UID - ${uid}, Product Name - ${product}`,
+                            text: text_r
+                        };
+                        transporter.sendMail(return_mail, function(error, info){
+                            if(error){
+                                console.log(error);
+                            }
+                        });
+                    }
+                })
                 res.send("OK");
             }
         })
@@ -396,11 +557,14 @@ app.use('/api/status', express.json(), async (req, res) => {
             console.log(error);
         });
     }  else if (asking == "tools"){
+        let product;
+        let group = "Tools";
         dbo.any("SELECT * FROM public.table_1 WHERE \"UID\" = $1", [uid])
         .then(function (result) {
             if(result.length == 0) {
                 res.send("Nonexist");
             } else {
+                product = result[0].Item;
                 dbo.any("INSERT INTO public.table_2 VALUES($1, $2, $3)", [uid, status, borrower])
                 .catch(function (error2) {
                     console.log(error2);
@@ -411,6 +575,93 @@ app.use('/api/status', express.json(), async (req, res) => {
                         console.log(error3);
                     });
                 }
+                
+                dbo.any("SELECT * FROM public.table_2 WHERE \"UID\" = $1 ORDER BY \"Date\"", [uid])
+                .then(async function (result) {
+                    let preborrower = result[result.length - 1].Borrower;
+                    let bor = 0, ret = 0;
+                    if(preborrower != borrower) {
+                        if(preborrower === 'NA' || preborrower.length < 8 || preborrower.includes('NA') || preborrower.includes('Na') || preborrower.includes('na')) {
+                            bor = 1;
+                        } else if (borrower === 'NA') {
+                            ret = 1;
+                        } else {
+                            bor = 1;
+                            ret = 1;
+                        }
+                    } else if (borrower != 'NA') {
+                        bor = 1;
+                    }
+                    if(bor === 1) {
+                        let bor_res = await find_wwid(borrower);
+                        let today = new Date();
+                        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        let dateTime = date+' '+time;
+                        let text_a = `Hi,
+
+                        Thanks for taking ANIL Inventory Management Tool service.
+                        The following item is assigned to you.
+                        For details, please access AIMT website to check your account - http://10.89.83.57/
+                        UID: ${uid}
+                        Product Name: ${product}
+                        WWID: ${borrower}
+                        Name: ${bor_res.name}
+                        Assigned By Date: ${dateTime}
+                        
+                        Sincerely, 
+                        ANIL Inventory Management System
+                        `.replace(/^ +/gm, '');
+
+                        let borrow_mail = {
+                            from: 'ANIL.Inventory.Management.Tool@intel.com',
+                            to: bor_res.mail,
+                            cc: cc_list,
+                            subject: `<Assigned> ${group}, UID - ${uid}, Product Name - ${product}`,
+                            text: text_a
+                        };
+                        transporter.sendMail(borrow_mail, function(error, info){
+                            if(error){
+                                console.log(error);
+                            }
+                        });
+                    }
+                    if(ret === 1) {
+                        let ret_res = await find_wwid(preborrower);
+                        let today = new Date();
+                        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        let dateTime = date+' '+time;
+
+                        let text_r = `Hi,
+
+                        We’ve received this item that you just checked in.
+                        We look forward to continuing to serve you.
+                        For details, please access AIMT website to check your account - http://10.89.83.57/
+                        UID: ${uid}
+                        Product Name: ${product}
+                        WWID: ${preborrower}
+                        Name: ${ret_res.name}
+                        Return By Date:  ${dateTime}
+
+                        Sincerely, 
+                        ANIL Inventory Management System
+                        `.replace(/^ +/gm, '');
+
+                        let return_mail = {
+                            from: 'ANIL.Inventory.Management.Tool@intel.com',
+                            to: ret_res.mail,
+                            cc: cc_list,
+                            subject: `<Return> ${group}, UID - ${uid}, Product Name - ${product}`,
+                            text: text_r
+                        };
+                        transporter.sendMail(return_mail, function(error, info){
+                            if(error){
+                                console.log(error);
+                            }
+                        });
+                    }
+                })
                 res.send("OK");
             }
         })
@@ -611,13 +862,17 @@ app.use('/api/newuid', express.json(), (req, res) => {
 
 app.use('/api/login', express.json(), (req, res) => {
     const cf = req.body;
-    ldapClient.on('error', err => { console.log('ldap error', err);});
+    const loginClient = ldap.createClient({
+        url: 'ldaps://corpad.intel.com:3269',
+        reconnect: true,
+        tlsOptions: { 'rejectUnauthorized': false }
+    });
+    loginClient.on('error', err => { console.log('ldap error', err);});
 
-    ldapClient.bind(`${cf.region}\\${cf.username}`, cf.password, (bindErr, bindRes) => {
+    loginClient.bind(`${cf.region}\\${cf.username}`, cf.password, (bindErr, bindRes) => {
         if (bindErr) {
             console.log('bind error', bindErr);
-            // let result = "SSID/password failed.\n";
-            // res.send(result);
+            loginClient.destroy();
             return;
         } else if (cf.username === "lab_anil23f") {
             const SECRET = 'anillab';
@@ -633,8 +888,10 @@ app.use('/api/login', express.json(), (req, res) => {
             attributes: ['sAMAccountName','employeeID','displayName','mail','department']
         };
         
-        ldapClient.search(`OU=Workers,DC=${cf.region},DC=corp,DC=intel,DC=com`, opts, (searchErr, searchRes) => {
+        loginClient.search(`OU=Workers,DC=${cf.region},DC=corp,DC=intel,DC=com`, opts, (searchErr, searchRes) => {
             if(searchErr) {
+                loginClient.unbind();
+                loginClient.destroy();
                 console.log('search error', searchErr);
                 return;
             }
@@ -646,16 +903,19 @@ app.use('/api/login', express.json(), (req, res) => {
                 const token = jwt.sign(ori, SECRET);
                 // const decoded = jwt.verify(token, SECRET);
                 res.send(token);
-                // res.send(user);
+                loginClient.unbind();
+                loginClient.destroy();
             });
     
             searchRes.on('error', error => {
-                ldapClient.unbind();
+                loginClient.unbind();
+                loginClient.destroy();
                 console.log('search error:', error);
             });
     
             searchRes.on('end', result => {
-                ldapClient.unbind();
+                loginClient.unbind();
+                loginClient.destroy();
             });
         });
     });

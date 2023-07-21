@@ -6,19 +6,30 @@
 
 .App-title {
   padding: 1vw;
-  padding-top: 5vh;
+  padding-top: 10px;
   padding-bottom: 3vh;
   font-size: 5vw;
 }
 
 .bread {
-  background-color: #C0C0C2;
-  padding-left: 5vw;
-  padding-right: 5vw;
-  padding-top: 0.5vh;
-  padding-bottom: 0.5vh;
-  color: white;
-  font-size: 1.8vw;
+  background-color: #0054AE !important;
+  padding-left: 5vw !important;
+  padding-right: 5vw !important;
+  padding-top: 15px !important;
+}
+
+.bread ol {
+  margin: 0 !important;
+}
+
+.breadcrumb li a {
+  color: white !important;
+  opacity: 1 !important;
+  font-size: 15px !important;
+}
+
+.breadcrumb-item.active {
+  color: white !important;
 }
 
 .App-header {

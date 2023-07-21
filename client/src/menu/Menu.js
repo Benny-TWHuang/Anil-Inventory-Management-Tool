@@ -5,11 +5,11 @@ import ButtonImage from "../button_img/ButtonImage.js";
 export default function Menu() {
   return (
     <div className="App">
-      {/* <div className="bread">
+      <div className="bread">
         <Breadcrumb>
-          <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+          <Breadcrumb.Item active>Menu</Breadcrumb.Item>
         </Breadcrumb>
-      </div> */}
+      </div>
       <header className="App-title">ANIL Inventory Management Tool</header>
       <div className="App-header">
         <ButtonImage img_path="./menu_img/nic.png" site="/adapter" name="Ethernet Network Adapter" />

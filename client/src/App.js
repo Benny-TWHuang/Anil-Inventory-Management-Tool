@@ -10,6 +10,7 @@ import Account from "./account/Account";
 import Guide from "./guide/Guide";
 import Rules from "./rules/Rules";
 import Tutorial from "./tutorial/Tutorial";
+import Sorttable from "./sorttable/Sorttable";
 import Navigatebar from "./navigatebar/Navigatebar";
 import { Routes, Route } from 'react-router-dom';
 import jwt from 'jwt-decode';
@@ -70,6 +71,7 @@ function App() {
           <Route path="/borrow" element={<Rules cate={"Borrow"} img_path={"./b_rule.png"}/>} />
           <Route path="/return" element={<Rules cate={"Return"} img_path={"./r_rule.png"}/>} />
           <Route path="/tutorial" element={<Tutorial />} />
+          <Route path="/test" element={<Sorttable value={"ada800"} membertype={mtype}/>} />
         </Routes>
       </div>
     </div>

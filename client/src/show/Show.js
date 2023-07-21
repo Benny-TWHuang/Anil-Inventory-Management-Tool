@@ -1,6 +1,6 @@
 import './Show.css';
 import React from 'react';
-// import Popup from '../popup/Popup';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import { Button, Modal } from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
 
@@ -331,7 +331,7 @@ export default function Show(props) {
   }, [props]) 
 
   let showtitle = "";
-  let DisplayData, keys, AddDevice, UpdateStatus, UpdateNote, ModifyInfo, UpdateUID;
+  let DisplayData, keys, AddDevice, UpdateStatus, UpdateNote, ModifyInfo, UpdateUID, bc;
 
   if(props.value.substring(0, 3) === "ada") {
     showtitle = "Series "+props.value.substring(3);
@@ -450,6 +450,22 @@ export default function Show(props) {
                       </form>
                     </div>
                   </>
+    
+    let cur_title = "";
+    if (props.value === "legacy") {
+      cur_title = "Legacy";
+    } else {
+      cur_title = "Series " + props.value.substring(3, 6);
+    }
+    bc = <>
+            <div className="bread">
+              <Breadcrumb>
+                <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+                <Breadcrumb.Item href="/adapter ">Ethernet Network Adapter</Breadcrumb.Item>
+                <Breadcrumb.Item active>{cur_title}</Breadcrumb.Item>
+              </Breadcrumb>
+            </div>
+          </>
   } else if(props.value === "module" || props.value === "AOC" || props.value === "DAC"){
     AddDevice = <>
                   <div className="add-wrapper">
@@ -562,6 +578,22 @@ export default function Show(props) {
                       </form>
                     </div>
                   </>
+
+    let cur_title = "";
+    if (props.value === "module") {
+      cur_title = "Module";
+    } else {
+      cur_title = props.value
+    }
+    bc = <>
+            <div className="bread">
+              <Breadcrumb>
+                <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+                <Breadcrumb.Item href="/module ">Module & Cable</Breadcrumb.Item>
+                <Breadcrumb.Item active>{cur_title}</Breadcrumb.Item>
+              </Breadcrumb>
+            </div>
+          </>
   } else if(props.value === "tools"){
     AddDevice = <>
                   <div className="add-wrapper">
@@ -603,6 +635,15 @@ export default function Show(props) {
                       </form>
                     </div>
                   </>
+
+   bc = <>
+           <div className="bread">
+             <Breadcrumb>
+               <Breadcrumb.Item href="/menu ">Menu</Breadcrumb.Item>
+               <Breadcrumb.Item active>Tools</Breadcrumb.Item>
+             </Breadcrumb>
+           </div>
+         </>
   } 
   
   let new_dis, status_dis, note_dis, mod_dis, uid_dis;
@@ -629,6 +670,7 @@ export default function Show(props) {
   if (da === undefined || da.length === 0) {
     return (
       <div className="App">
+        {bc}
         <header className="App-title">{showtitle}</header>
         <div className="App-header">
           <h1>There is no data.</h1>
@@ -660,6 +702,7 @@ export default function Show(props) {
   if (inda === undefined || inda === null || inda.length === 0) {
     return (
         <div className="App">
+          {bc}
           <header className="App-title">{showtitle}</header>
           <div className="App-header">
             {new_dis}
@@ -731,53 +774,53 @@ export default function Show(props) {
                 </thead>
                 <tbody>              
                     {DisplayData}
-                    <Modal show={ButtonPop} onHide={handleClose}>
-                      <Modal.Header closeButton>
-                        <Modal.Title>Detail</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        There is no Note or Borrow data about this UID. Please contact with AIMT owner to ask for help.
-                      </Modal.Body>
-                      <Modal.Footer>
-                        {uid_dis}
-                        {mod_dis}
-                        <Button variant="secondary" onClick={handleClose}> Close </Button>
-                      </Modal.Footer>
-                    </Modal>
-                    <Modal show={upuid} onHide={upuidClose}>
-                      <Modal.Header closeButton>
-                        <Modal.Title>Update UID</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        {UpdateUID}
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="primary" onClick={UIDchange}>
-                          Save Changes
-                        </Button>
-                        <Button variant="secondary" onClick={upuidClose}>
-                          Close
-                        </Button>
-                      </Modal.Footer>
-                    </Modal>
-                    <Modal show={modify} onHide={modifyClose}>
-                      <Modal.Header closeButton>
-                        <Modal.Title>Modify UID: {uid}</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        {ModifyInfo}
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="primary" onClick={addModify}>
-                          Save Changes
-                        </Button>
-                        <Button variant="secondary" onClick={modifyClose}>
-                          Close
-                        </Button>
-                      </Modal.Footer>
-                    </Modal>
                 </tbody>
             </table>
+            <Modal show={ButtonPop} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Detail</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                There is no Note or Borrow data about this UID. Please contact with AIMT owner to ask for help.
+              </Modal.Body>
+              <Modal.Footer>
+                {uid_dis}
+                {mod_dis}
+                <Button variant="secondary" onClick={handleClose}> Close </Button>
+              </Modal.Footer>
+            </Modal>
+            <Modal show={upuid} onHide={upuidClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Update UID</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {UpdateUID}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="primary" onClick={UIDchange}>
+                  Save Changes
+                </Button>
+                <Button variant="secondary" onClick={upuidClose}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <Modal show={modify} onHide={modifyClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Modify UID: {uid}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {ModifyInfo}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="primary" onClick={addModify}>
+                  Save Changes
+                </Button>
+                <Button variant="secondary" onClick={modifyClose}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
       );
@@ -785,6 +828,7 @@ export default function Show(props) {
 
   return (
     <div className="App">
+      {bc}
       <header className="App-title">{showtitle}</header>
       <div className="App-header">
         {new_dis}
@@ -839,111 +883,111 @@ export default function Show(props) {
           </Modal.Footer>
         </Modal>
         <table className="table table-light table-striped table-hover">
-            <thead>
-                <tr>
-                  <th>#</th>
-                  {
-                    // create td elements from fieldsKeys
-                    keys.map((k, idx2) =>  {
-                                          if (props.value === "legacy" && k === "Family") {
-                                            return <td key={idx2} style={{display:'none'}}>{k}</td>;
-                                          } else {
-                                            return <th key={idx2}>{k}</th>;
-                                          }
-                            })
-                    }
-                </tr>
-            </thead>
-            <tbody>              
-                {DisplayData}
-                <Modal show={ButtonPop} onHide={handleClose}  className="fade modal-lg">
-                  <Modal.Header closeButton>
-                    <Modal.Title>{uid}</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <div className="inner-table">
-                      <table className="table table-light table-striped table-hover">
-                        <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>UID</th>
-                              <th>Status</th>
-                              <th>Borrower</th>
-                              <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>              
-                            {inda.map(
-                              (info, i)=>{
-                                  return( 
-                                      <tr key={i} onClick={async (e)=>{await fetchwwid(e.target.parentElement.childNodes[3].innerText);personShow(e);}} >
-                                          <td>{i}</td>
-                                          <td>{info.UID}</td>
-                                          <td>{info.Status}</td>
-                                          <td>{info.Borrower}</td>
-                                          <td>{info.Date}</td>
-                                      </tr>
-                                  )
-                              })
-                            }
-                        </tbody>
-                      </table>
-                      <p>Note: {inda[0].Note}</p>
-                      <Modal show={person} onHide={personClose}>
-                        <Modal.Header closeButton>
-                          <Modal.Title>Borrower Information</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          {per_info}
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button variant="secondary" onClick={personClose}>
-                            Close
-                          </Button>
-                        </Modal.Footer>
-                      </Modal>
-                    </div>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    {uid_dis}
-                    {mod_dis}
-                    <Button variant="secondary" onClick={handleClose}> Close </Button>
-                  </Modal.Footer>
-                </Modal>
-                <Modal show={upuid} onHide={upuidClose}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Update UID</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    {UpdateUID}
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="primary" onClick={UIDchange}>
-                      Save Changes
-                    </Button>
-                    <Button variant="secondary" onClick={upuidClose}>
-                      Close
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-                <Modal show={modify} onHide={modifyClose}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Modify UID: {uid}</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    {ModifyInfo}
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="primary" onClick={addModify}>
-                      Save Changes
-                    </Button>
-                    <Button variant="secondary" onClick={modifyClose}>
-                      Close
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-            </tbody>
+          <thead>
+            <tr>
+              <th>#</th>
+              {
+                // create td elements from fieldsKeys
+                keys.map((k, idx2) =>  {
+                                      if (props.value === "legacy" && k === "Family") {
+                                        return <td key={idx2} style={{display:'none'}}>{k}</td>;
+                                      } else {
+                                        return <th key={idx2}>{k}</th>;
+                                      }
+                        })
+                }
+            </tr>
+          </thead>
+          <tbody>              
+            {DisplayData}
+          </tbody>
         </table>
+        <Modal show={ButtonPop} onHide={handleClose}  className="fade modal-lg">
+          <Modal.Header closeButton>
+            <Modal.Title>{uid}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="inner-table">
+              <table className="table table-light table-striped table-hover">
+                <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>UID</th>
+                      <th>Status</th>
+                      <th>Borrower</th>
+                      <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>              
+                    {inda.map(
+                      (info, i)=>{
+                          return( 
+                              <tr key={i} onClick={async (e)=>{await fetchwwid(e.target.parentElement.childNodes[3].innerText);personShow(e);}} >
+                                  <td>{i}</td>
+                                  <td>{info.UID}</td>
+                                  <td>{info.Status}</td>
+                                  <td>{info.Borrower}</td>
+                                  <td>{info.Date}</td>
+                              </tr>
+                          )
+                      })
+                    }
+                </tbody>
+              </table>
+              <p>Note: {inda[0].Note}</p>
+              <Modal show={person} onHide={personClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Borrower Information</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {per_info}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={personClose}>
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            {uid_dis}
+            {mod_dis}
+            <Button variant="secondary" onClick={handleClose}> Close </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={upuid} onHide={upuidClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Update UID</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {UpdateUID}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={UIDchange}>
+              Save Changes
+            </Button>
+            <Button variant="secondary" onClick={upuidClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={modify} onHide={modifyClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modify UID: {uid}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {ModifyInfo}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={addModify}>
+              Save Changes
+            </Button>
+            <Button variant="secondary" onClick={modifyClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
